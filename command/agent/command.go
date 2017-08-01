@@ -13,9 +13,8 @@ import (
 
 // Command is a CLI command use to start a huton agent.
 type Command struct {
-	UI         cli.Ui
-	ShutdownCh <-chan struct{}
-	instance   huton.Instance
+	UI       cli.Ui
+	instance huton.Instance
 }
 
 // Run is called by the CLI to execute the command.
@@ -64,9 +63,7 @@ func (c *Command) handleSignals() int {
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 	select {
 	case <-signalCh:
-		c.instance.Shutdown()
-		return 0
-	case <-c.ShutdownCh:
+		c.instance.Leave()
 		c.instance.Shutdown()
 		return 0
 	}
